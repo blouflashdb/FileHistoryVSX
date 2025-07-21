@@ -1,24 +1,19 @@
 {
-  "publisher": "antfu",
-  "name": "ext-name",
-  "displayName": "ext-name",
-  "version": "0.0.0",
+  "publisher": "blouflashdb",
+  "name": "file-history-vsx",
+  "displayName": "FileHistoryVSX",
+  "version": "0.0.1",
   "private": true,
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "npm@11.4.2",
   "description": "",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/ext-name#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antfu/ext-name"
+    "url": "https://github.com/blouflashdb/FileHistoryVSX"
   },
   "bugs": {
-    "url": "https://github.com/antfu/ext-name/issues"
-  },
-  "sponsor": {
-    "url": "https://github.com/sponsors/antfu"
+    "url": "https://github.com/blouflashdb/FileHistoryVSX/issues"
   },
   "categories": [
     "Other"
@@ -31,7 +26,7 @@
     "res/*"
   ],
   "engines": {
-    "vscode": "^1.97.0"
+    "vscode": "^1.102.0"
   },
   "activationEvents": [
     "onStartupFinished"
@@ -40,7 +35,7 @@
     "commands": [],
     "configuration": {
       "type": "object",
-      "title": "ext-name",
+      "title": "FileHistoryVSX",
       "properties": {}
     }
   },
@@ -58,25 +53,20 @@
     "release": "bumpp && nr publish"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.2.1",
-    "@antfu/ni": "^23.3.1",
-    "@types/node": "^22.13.4",
-    "@types/vscode": "^1.97.0",
-    "@vscode/vsce": "^3.2.2",
-    "bumpp": "^10.0.3",
-    "eslint": "^9.20.1",
+    "@antfu/eslint-config": "^4.17.0",
+    "@antfu/ni": "^25.0.0",
+    "@types/node": "^24.0.15",
+    "@types/vscode": "^1.102.0",
+    "@vscode/vsce": "^3.6.0",
+    "bumpp": "^10.2.0",
+    "eslint": "^9.31.0",
     "esno": "^4.8.0",
-    "pnpm": "^10.4.1",
-    "reactive-vscode": "^0.2.10",
-    "tsdown": "^0.9.6",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.0",
-    "vitest": "^3.0.5",
-    "vscode-ext-gen": "^1.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
+    "pnpm": "^10.13.1",
+    "reactive-vscode": "^0.3.1",
+    "tsdown": "^0.12.9",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.5",
+    "vitest": "^3.2.4",
+    "vscode-ext-gen": "^1.1.0"
   }
 }
