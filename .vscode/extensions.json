@@ -1,6 +1,7 @@
 {
   "recommendations": [
-    "amodio.tsl-problem-matcher",
-    "emeraldwalk.runonsave"
+    "emeraldwalk.runonsave",
+    "dbaeumer.vscode-eslint",
+    "vue.volar"
   ]
 }
