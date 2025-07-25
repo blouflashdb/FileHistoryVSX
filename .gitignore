@@ -11,3 +11,7 @@ logs
 node_modules
 temp
 src/generated
+
+# Auto-generated type declarations
+auto-imports.d.ts
+components.d.ts

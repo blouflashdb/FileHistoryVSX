@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+:root {
+  --ui-bg: var(--vscode-editor-background);
+  --ui-bg-muted: var(--vscode-sideBar-background);
+  --ui-bg-elevated: var(--vscode-editorWidget-background);
+  --ui-bg-accented: var(--vscode-input-background);
+  --ui-bg-inverted: var(--vscode-editor-foreground);
+
+  --ui-text: var(--vscode-editor-foreground);
+  --ui-text-highlighted: var(--vscode-list-highlightForeground);
+  --ui-text-muted: var(--vscode-descriptionForeground);
+  --ui-text-dimmed: var(--vscode-disabledForeground);
+  --ui-text-inverted: var(--vscode-editor-background);
+
+  --ui-border: var(--vscode-editorWidget-border);
+  --ui-border-muted: var(--vscode-panel-border);
+  --ui-border-accented: var(--vscode-focusBorder);
+  --ui-border-inverted: var(--vscode-editor-foreground);
+
+  --ui-primary: var(--vscode-button-background);
+  --ui-secondary: var(--vscode-input-foreground);
+  --ui-success: var(--vscode-testing-iconPassed);
+  --ui-error: var(--vscode-testing-iconFailed);
+  --ui-warning: var(--vscode-testing-iconQueued);
+  --ui-info: var(--vscode-editorInfo-foreground);
+
+  --ui-shadow: var(--vscode-widget-shadow);
+  --ui-shadow-lg: var(--vscode-scrollbar-shadow);
+}
+
+/* VS Code webview specific adjustments */
+body {
+  padding: 0;
+}

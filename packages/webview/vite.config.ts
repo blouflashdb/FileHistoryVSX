@@ -1,10 +1,19 @@
 import { resolve } from 'node:path'
+import ui from '@nuxt/ui/vite'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    ui({
+      colorMode: false,
+      theme: {
+        transitions: false,
+      },
+    }),
+  ],
   build: {
     rollupOptions: {
       input: resolve(__dirname, 'src/main.ts'),

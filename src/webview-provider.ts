@@ -73,7 +73,7 @@ export class FileHistoryWebviewProvider {
     <link href="${stylesUri}" rel="stylesheet">
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app" class="isolate"></div>
     <script type="module" src="${scriptUri}"></script>
 </body>
 </html>`

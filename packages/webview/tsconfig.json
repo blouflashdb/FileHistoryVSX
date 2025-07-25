@@ -1,4 +1,11 @@
 {
+  "compilerOptions": {
+    "paths": {
+      "#build/ui": [
+        "../../node_modules/@nuxt/ui/.nuxt/ui"
+      ]
+    }
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
