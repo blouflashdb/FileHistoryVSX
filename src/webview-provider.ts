@@ -85,28 +85,6 @@ export class FileHistoryWebviewProvider {
 
     this.panel.webview.onDidReceiveMessage(async (message) => {
       switch (message.command) {
-        case 'getCurrentFile': {
-          const activeEditor = window.activeTextEditor
-          const currentFile = activeEditor?.document.fileName || null
-          this.panel?.webview.postMessage({
-            command: 'updateCurrentFile',
-            data: currentFile,
-          })
-
-          // Add to history if we have a file
-          if (currentFile) {
-            const fileName = path.basename(currentFile)
-            this.addToHistory(fileName)
-          }
-          break
-        }
-        case 'getFileHistory': {
-          this.panel?.webview.postMessage({
-            command: 'updateFileHistory',
-            data: this.fileHistory,
-          })
-          break
-        }
         case 'analyzeFile': {
           const filePath = message.data
           if (filePath) {
@@ -128,9 +106,6 @@ export class FileHistoryWebviewProvider {
 
     window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
-        const fileName = path.basename(editor.document.fileName)
-        this.addToHistory(fileName)
-
         // Notify webview of current file change
         this.panel?.webview.postMessage({
           command: 'updateCurrentFile',
@@ -185,24 +160,6 @@ export class FileHistoryWebviewProvider {
         command: 'analysisError',
         data: { error: error instanceof Error ? error.message : 'Unknown error occurred' },
       })
-    }
-  }
-
-  private addToHistory(fileName: string) {
-    const existingIndex = this.fileHistory.findIndex(item => item.name === fileName)
-
-    if (existingIndex >= 0) {
-      // Update timestamp if file already exists
-      this.fileHistory[existingIndex].timestamp = Date.now()
-    }
-    else {
-      // Add new file to history
-      this.fileHistory.unshift({ name: fileName, timestamp: Date.now() })
-
-      // Keep only last 50 files
-      if (this.fileHistory.length > 50) {
-        this.fileHistory = this.fileHistory.slice(0, 50)
-      }
     }
   }
 }

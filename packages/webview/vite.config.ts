@@ -12,6 +12,13 @@ export default defineConfig({
       theme: {
         transitions: false,
       },
+      ui: {
+        card: {
+          slots: {
+            root: 'rounded-none',
+          },
+        },
+      },
     }),
   ],
   build: {

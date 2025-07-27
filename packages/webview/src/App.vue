@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { useEventListener } from '@vueuse/core'
+import { ref } from 'vue'
 
 const vscode = acquireVsCodeApi()
-
-interface FileHistoryItem {
-  name: string
-  timestamp: number
-}
 
 interface GitCommit {
   hash: string
@@ -30,24 +26,11 @@ interface GitHistory {
 
 // Reactive data
 const currentFile = ref<string>('')
-const fileHistory = ref<FileHistoryItem[]>([])
 const gitHistory = ref<GitHistory | null>(null)
 const isAnalyzing = ref<boolean>(false)
 const analysisError = ref<string>('')
 
 // Methods
-function requestCurrentFile() {
-  vscode?.postMessage({
-    command: 'getCurrentFile',
-  })
-}
-
-function refreshHistory() {
-  vscode?.postMessage({
-    command: 'getFileHistory',
-  })
-}
-
 function analyzeCurrentFile() {
   if (!currentFile.value) {
     return
@@ -68,16 +51,12 @@ function getCommitSummary(message: string) {
   return message.split('\n')[0]
 }
 
-// Handle messages from VS Code
-window.addEventListener('message', (event) => {
+useEventListener(window, 'message', (event) => {
   const message = event.data
 
   switch (message.command) {
     case 'updateCurrentFile':
       currentFile.value = message.data
-      break
-    case 'updateFileHistory':
-      fileHistory.value = message.data
       break
     case 'analysisStarted':
       isAnalyzing.value = true
@@ -93,16 +72,9 @@ window.addEventListener('message', (event) => {
       analysisError.value = message.data.error
       break
     case 'historyCleared':
-      fileHistory.value = []
       gitHistory.value = null
       break
   }
-})
-
-// Initialize
-onMounted(() => {
-  requestCurrentFile()
-  refreshHistory()
 })
 </script>
 
@@ -121,7 +93,7 @@ onMounted(() => {
       <main class="max-w-4xl mx-auto p-6 space-y-6">
         <RouterView />
 
-        <UCard class="rounded-none">
+        <UCard>
           <template #header>
             <h2 class="text-lg font-semibold">
               Current File
@@ -141,9 +113,8 @@ onMounted(() => {
             <div class="flex gap-3 flex-wrap">
               <UButton
                 color="primary"
-                @click="requestCurrentFile"
               >
-                Get Current File
+                TODO?
               </UButton>
               <UButton
                 color="secondary"
