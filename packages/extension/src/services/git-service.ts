@@ -1,4 +1,5 @@
 import type { ExtensionContext } from 'vscode'
+import type { FileHistory, GitCommitInfo } from './types.js'
 import { extensions, Uri, workspace } from 'vscode'
 import { logger } from '../utils.js'
 
@@ -28,14 +29,14 @@ export interface RepositoryState {
 }
 
 export interface Branch {
-  type: RefType
+  type: RefTypeValue
   name?: string
   commit?: string
   remote?: string
 }
 
 export interface Ref {
-  type: RefType
+  type: RefTypeValue
   name?: string
   commit?: string
   remote?: string
@@ -73,32 +74,13 @@ export interface LogOptions {
   shortStat?: boolean
 }
 
-export enum RefType {
-  Head,
-  RemoteHead,
-  Tag,
-}
+export const RefType = {
+  Head: 0,
+  RemoteHead: 1,
+  Tag: 2,
+} as const
 
-// Our extension's git interfaces
-export interface GitCommitInfo {
-  hash: string
-  author: string
-  email: string
-  date: Date
-  message: string
-  diff: string
-  filesChanged: string[]
-  issueReferences: string[]
-}
-
-export interface FileHistory {
-  filePath: string
-  commits: GitCommitInfo[]
-  totalCommits: number
-  firstCommit: Date | null
-  lastCommit: Date | null
-  repositoryRoot: string
-}
+export type RefTypeValue = typeof RefType[keyof typeof RefType]
 
 export class GitService {
   private gitAPI: GitAPI | null = null
@@ -288,14 +270,14 @@ export class GitService {
     const references: string[] = []
 
     for (const pattern of patterns) {
-      const matches = message.matchAll(pattern)
+      const matches = Array.from(message.matchAll(pattern))
       for (const match of matches) {
         references.push(match[0])
       }
     }
 
     // Remove duplicates and return
-    return [...new Set(references)]
+    return Array.from(new Set(references))
   }
 
   /**

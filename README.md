@@ -60,15 +60,17 @@ This extension combines modern technologies for a powerful development experienc
 - **VS Code Extension API** - Core extension functionality
 - **Vue.js 3** - Reactive webview interface with Composition API
 - **TypeScript** - Type safety throughout the codebase
+- **Turborepo** - Monorepo management with optimized build pipeline
 - **Vite** - Fast webview bundling and development
+- **obuild** - Modern TypeScript bundler for shared packages
 - **Reactive VSCode** - Reactive extension development framework
 - **AI SDK** - Integration with OpenAI compatible APIs
 - **Git Integration** - Deep repository analysis capabilities
 
 ### Prerequisites
 
-- Node.js 18+
-- npm 9+
+- Node.js 22+
+- npm 11+
 - VS Code 1.102.0+
 
 ### Getting Started
@@ -88,26 +90,31 @@ npm run build
 ### Development Workflow
 
 ```bash
-# Development mode (watch both extension and webview)
+# Development mode (watch all packages in parallel)
 npm run dev
 
-# Build extension only
-npm run build:extension
+# Build all packages with Turborepo
+npm run build
 
-# Build webview only
-npm run build:webview
-
-# Watch webview development
-npm run dev:webview
-
-# Run tests
-npm test
-
-# Type checking
+# Type checking across all packages
 npm run typecheck
 
-# Linting
+# Linting across all packages
 npm run lint
+```
+
+#### Package-specific Development
+
+```bash
+# Work on specific packages (from root)
+cd packages/extension && npm run dev    # Extension development
+cd packages/webview && npm run dev      # Webview development
+cd packages/types && npm run dev        # Types package (stub mode)
+
+# Build specific packages
+cd packages/extension && npm run build  # Extension only
+cd packages/webview && npm run build    # Webview only
+cd packages/types && npm run build      # Types package with obuild
 ```
 
 ### Package and Publish
@@ -125,20 +132,35 @@ npm run release
 
 ## Architecture
 
-The extension follows a clean separation of concerns:
+The extension follows a clean monorepo architecture with Turborepo for optimized builds:
 
-### Extension Core
+### Monorepo Structure
+
+**`packages/extension/`** - VS Code extension core
 - **`src/index.ts`** - Main extension entry point and command registration
 - **`src/webview-provider.ts`** - Webview provider managing Vue.js interface
 - **`src/services/git-service.ts`** - Git repository integration and analysis
 - **`src/config.ts`** - Configuration management for AI settings
 - **`src/ai-config.ts`** - AI provider configuration and API integration
 
-### Webview Interface (`packages/webview/`)
+**`packages/webview/`** - Vue.js webview interface
 - **`src/App.vue`** - Main Vue.js component with reactive UI
 - **`src/main.ts`** - Vue application initialization and setup
 - **`vite.config.ts`** - Vite configuration for webview bundling
 - **`public/`** - Static assets and HTML template
+
+**`packages/types/`** - Shared TypeScript types
+- **`src/index.ts`** - Shared type definitions and interfaces
+- **`build.config.ts`** - obuild configuration for modern bundling
+- Built with obuild for optimized TypeScript compilation and ESM output
+
+### Build System
+
+The project uses **Turborepo** for monorepo management with the following pipeline:
+1. **Linting** - ESLint across all packages
+2. **Type checking** - TypeScript validation
+3. **Building** - Parallel builds with dependency awareness
+4. **Caching** - Intelligent build caching for faster development
 
 ### Key Features
 
@@ -166,7 +188,6 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Run tests (`npm test`)
 5. Commit your changes (`git commit -m 'Add amazing feature'`)
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request

@@ -1,0 +1,33 @@
+{
+  "name": "@file-history-vsx/types",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "TypeScript types for File History VSX",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "obuild",
+    "dev": "obuild --stub",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@tsconfig/node-ts": "^23.6.1",
+    "@types/node": "^24.1.0",
+    "obuild": "^0.2.1",
+    "typescript": "^5.8.3"
+  }
+}

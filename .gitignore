@@ -10,7 +10,8 @@ lib-cov
 logs
 node_modules
 temp
-src/generated
+packages/extension/src/generated
+.turbo
 
 # Auto-generated type declarations
 auto-imports.d.ts
