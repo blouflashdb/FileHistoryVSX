@@ -85,6 +85,21 @@
           "maximum": 2,
           "description": "Temperature for API calls (0-2)",
           "markdownDescription": "Controls randomness in API responses. Lower values make output more focused and deterministic."
+        },
+        "fileHistoryVSX.git.issueReferencePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "#(\\d+)",
+            "AB#(\\d+)",
+            "!(\\d+)",
+            "[A-Z]+-\\d+",
+            "(?:fixes?|closes?|resolves?)\\s+#(\\d+)"
+          ],
+          "description": "Regular expression patterns for extracting issue/ticket references from commit messages",
+          "markdownDescription": "Array of regular expression patterns used to extract issue, PR, and ticket references from commit messages. Supports GitHub (#123), Azure DevOps (AB#123), GitLab (!123), JIRA (ABC-123), and generic patterns (fixes #123)."
         }
       }
     }

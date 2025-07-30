@@ -1,6 +1,9 @@
+import type {
+  AnyWebviewMessage,
+  FileHistory,
+} from '@file-history-vsx/types'
 import type { ExtensionContext, WebviewPanel } from 'vscode'
 import type { GitService } from './services/git-service.js'
-import type { FileHistory } from './services/types.js'
 import * as path from 'node:path'
 import { Uri, ViewColumn, window } from 'vscode'
 import { displayName as title } from './generated/meta.js'
@@ -9,7 +12,6 @@ export class FileHistoryWebviewProvider {
   private panel: WebviewPanel | undefined
   private context: ExtensionContext
   private gitService: GitService
-  private fileHistory: Array<{ name: string, timestamp: number }> = []
   private currentFileHistory: FileHistory | null = null
 
   constructor(context: ExtensionContext, gitService: GitService) {
@@ -83,21 +85,13 @@ export class FileHistoryWebviewProvider {
     if (!this.panel)
       return
 
-    this.panel.webview.onDidReceiveMessage(async (message) => {
-      switch (message.command) {
+    this.panel.webview.onDidReceiveMessage(async (message: AnyWebviewMessage) => {
+      switch (message.type) {
         case 'analyzeFile': {
-          const filePath = message.data
+          const analyzeMessage = message
+          const filePath = analyzeMessage.data.filePath
           if (filePath) {
             await this.analyzeFile(filePath)
-          }
-          break
-        }
-        case 'getGitHistory': {
-          if (this.currentFileHistory) {
-            this.panel?.webview.postMessage({
-              command: 'updateGitHistory',
-              data: this.currentFileHistory,
-            })
           }
           break
         }
@@ -107,12 +101,16 @@ export class FileHistoryWebviewProvider {
     window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
         // Notify webview of current file change
-        this.panel?.webview.postMessage({
-          command: 'updateCurrentFile',
-          data: editor.document.fileName,
+        this.sendMessage({
+          type: 'updateCurrentFile',
+          data: { filePath: editor.document.fileName },
         })
       }
     })
+  }
+
+  private sendMessage(message: AnyWebviewMessage) {
+    this.panel?.webview.postMessage(message)
   }
 
   /**
@@ -121,15 +119,15 @@ export class FileHistoryWebviewProvider {
   public async analyzeFile(filePath: string): Promise<void> {
     try {
       // Show loading state
-      this.panel?.webview.postMessage({
-        command: 'analysisStarted',
+      this.sendMessage({
+        type: 'analysisStarted',
         data: { filePath },
       })
 
       // Check if file is in git repository
       if (!await this.gitService.isFileInGitRepository(filePath)) {
-        this.panel?.webview.postMessage({
-          command: 'analysisError',
+        this.sendMessage({
+          type: 'analysisError',
           data: { error: 'File is not in a git repository' },
         })
         return
@@ -139,8 +137,8 @@ export class FileHistoryWebviewProvider {
       const gitHistory = await this.gitService.getFileHistory(filePath)
 
       if (!gitHistory) {
-        this.panel?.webview.postMessage({
-          command: 'analysisError',
+        this.sendMessage({
+          type: 'analysisError',
           data: { error: 'Failed to retrieve git history' },
         })
         return
@@ -149,15 +147,15 @@ export class FileHistoryWebviewProvider {
       this.currentFileHistory = gitHistory
 
       // Send results to webview
-      this.panel?.webview.postMessage({
-        command: 'analysisComplete',
+      this.sendMessage({
+        type: 'analysisComplete',
         data: gitHistory,
       })
     }
     catch (error) {
       console.error('Error analyzing file:', error)
-      this.panel?.webview.postMessage({
-        command: 'analysisError',
+      this.sendMessage({
+        type: 'analysisError',
         data: { error: error instanceof Error ? error.message : 'Unknown error occurred' },
       })
     }

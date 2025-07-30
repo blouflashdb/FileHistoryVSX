@@ -1,34 +1,23 @@
 <script setup lang="ts">
+import type {
+  AnyWebviewMessage,
+  FileHistory,
+} from '@file-history-vsx/types'
 import { useEventListener } from '@vueuse/core'
 import { ref } from 'vue'
 
 const vscode = acquireVsCodeApi()
 
-interface GitCommit {
-  hash: string
-  author: string
-  email: string
-  date: string
-  message: string
-  diff: string
-  filesChanged: string[]
-  issueReferences: string[]
-}
-
-interface GitHistory {
-  filePath: string
-  commits: GitCommit[]
-  totalCommits: number
-  firstCommit: string | null
-  lastCommit: string | null
-  repositoryRoot: string
-}
-
 // Reactive data
 const currentFile = ref<string>('')
-const gitHistory = ref<GitHistory | null>(null)
+const gitHistory = ref<FileHistory | null>(null)
 const isAnalyzing = ref<boolean>(false)
 const analysisError = ref<string>('')
+
+// Helper function to send typed messages
+function sendMessage(message: AnyWebviewMessage): void {
+  vscode?.postMessage(message)
+}
 
 // Methods
 function analyzeCurrentFile() {
@@ -37,13 +26,13 @@ function analyzeCurrentFile() {
   }
 
   analysisError.value = ''
-  vscode?.postMessage({
-    command: 'analyzeFile',
-    data: currentFile.value,
+  sendMessage({
+    type: 'analyzeFile',
+    data: { filePath: currentFile.value },
   })
 }
 
-function formatDate(dateInput: string | number) {
+function formatDate(dateInput: string | number | Date) {
   return new Date(dateInput).toLocaleString()
 }
 
@@ -52,11 +41,11 @@ function getCommitSummary(message: string) {
 }
 
 useEventListener(window, 'message', (event) => {
-  const message = event.data
+  const message = event.data as AnyWebviewMessage
 
-  switch (message.command) {
+  switch (message.type) {
     case 'updateCurrentFile':
-      currentFile.value = message.data
+      currentFile.value = message.data.filePath
       break
     case 'analysisStarted':
       isAnalyzing.value = true
@@ -71,8 +60,8 @@ useEventListener(window, 'message', (event) => {
       isAnalyzing.value = false
       analysisError.value = message.data.error
       break
-    case 'historyCleared':
-      gitHistory.value = null
+    default:
+      // Handle unknown message types
       break
   }
 })

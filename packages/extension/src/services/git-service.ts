@@ -1,6 +1,7 @@
+import type { FileHistory, GitCommitInfo } from '@file-history-vsx/types'
 import type { ExtensionContext } from 'vscode'
-import type { FileHistory, GitCommitInfo } from './types.js'
 import { extensions, Uri, workspace } from 'vscode'
+import { config } from '../config.js'
 import { logger } from '../utils.js'
 
 // Git extension API interfaces
@@ -254,18 +255,8 @@ export class GitService {
    * Supports GitHub (#123), Azure DevOps (#456), GitLab (!789), etc.
    */
   private extractIssueReferences(message: string): string[] {
-    const patterns = [
-      // GitHub issues and PRs: #123
-      /#(\d+)/g,
-      // Azure DevOps: AB#123, fixes #456
-      /AB#(\d+)/gi,
-      // GitLab merge requests: !123
-      /!(\d+)/g,
-      // JIRA tickets: ABC-123
-      /[A-Z]+-\d+/g,
-      // Generic ticket references: fixes #123, closes #456, resolves #789
-      /(?:fixes?|closes?|resolves?)\s+#(\d+)/gi,
-    ]
+    const patternStrings = config.fileHistoryVSX.git.issueReferencePatterns
+    const patterns = patternStrings.map(patternStr => new RegExp(patternStr, 'gi'))
 
     const references: string[] = []
 
@@ -278,26 +269,6 @@ export class GitService {
 
     // Remove duplicates and return
     return Array.from(new Set(references))
-  }
-
-  /**
-   * Get current branch name
-   */
-  public async getCurrentBranch(filePath: string): Promise<string | null> {
-    try {
-      const fileUri = Uri.file(filePath)
-      const repo = this.getRepository(fileUri)
-
-      if (!repo || !repo.state.HEAD) {
-        return null
-      }
-
-      return repo.state.HEAD.name || null
-    }
-    catch (error) {
-      logger.error('Error getting current branch:', error)
-      return null
-    }
   }
 
   /**

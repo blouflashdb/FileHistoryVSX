@@ -37,16 +37,6 @@ export interface GitCommitInfo {
 }
 
 /**
- * @deprecated Use GitCommitInfo instead
- */
-export interface GitCommit extends GitCommitInfo {
-  /** @deprecated Use hash instead */
-  sha: string
-  /** @deprecated Use filesChanged instead */
-  files: string[]
-}
-
-/**
  * File history analysis result
  */
 export interface FileHistory {
@@ -81,25 +71,14 @@ export interface FileAnalysis {
 }
 
 /**
- * Git-related error information
- */
-export interface GitError {
-  /** Error message */
-  message: string
-  /** Error code for programmatic handling */
-  code?: string
-  /** Additional error details */
-  details?: string
-}
-
-/**
  * Webview message types for communication between extension and webview
  */
 export type WebviewMessageType
   = | 'analyzeFile'
-    | 'showHistory'
-    | 'getConfig'
-    | 'updateConfig'
+    | 'updateCurrentFile'
+    | 'analysisStarted'
+    | 'analysisComplete'
+    | 'analysisError'
 
 /**
  * Base interface for webview messages
@@ -121,24 +100,31 @@ export interface AnalyzeFileMessage extends WebviewMessage<{ filePath: string }>
 }
 
 /**
- * Message to show file history
+ * Message to update current file in webview
  */
-export interface ShowHistoryMessage extends WebviewMessage<{ filePath: string }> {
-  type: 'showHistory'
+export interface UpdateCurrentFileMessage extends WebviewMessage<{ filePath: string }> {
+  type: 'updateCurrentFile'
 }
 
 /**
- * Message to get current configuration
+ * Message to indicate analysis has started
  */
-export interface GetConfigMessage extends WebviewMessage<void> {
-  type: 'getConfig'
+export interface AnalysisStartedMessage extends WebviewMessage<{ filePath: string }> {
+  type: 'analysisStarted'
 }
 
 /**
- * Message to update configuration
+ * Message to indicate analysis is complete
  */
-export interface UpdateConfigMessage extends WebviewMessage<Partial<OpenAIConfig>> {
-  type: 'updateConfig'
+export interface AnalysisCompleteMessage extends WebviewMessage<FileHistory> {
+  type: 'analysisComplete'
+}
+
+/**
+ * Message to indicate analysis error
+ */
+export interface AnalysisErrorMessage extends WebviewMessage<{ error: string }> {
+  type: 'analysisError'
 }
 
 /**
@@ -146,18 +132,7 @@ export interface UpdateConfigMessage extends WebviewMessage<Partial<OpenAIConfig
  */
 export type AnyWebviewMessage
   = | AnalyzeFileMessage
-    | ShowHistoryMessage
-    | GetConfigMessage
-    | UpdateConfigMessage
-
-/**
- * Error types that can occur in the extension
- */
-export interface FileHistoryError {
-  /** Error message */
-  message: string
-  /** Error code for programmatic handling */
-  code: string
-  /** Additional error details */
-  details?: Record<string, any>
-}
+    | UpdateCurrentFileMessage
+    | AnalysisStartedMessage
+    | AnalysisCompleteMessage
+    | AnalysisErrorMessage

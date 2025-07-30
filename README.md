@@ -103,20 +103,6 @@ npm run typecheck
 npm run lint
 ```
 
-#### Package-specific Development
-
-```bash
-# Work on specific packages (from root)
-cd packages/extension && npm run dev    # Extension development
-cd packages/webview && npm run dev      # Webview development
-cd packages/types && npm run dev        # Types package (stub mode)
-
-# Build specific packages
-cd packages/extension && npm run build  # Extension only
-cd packages/webview && npm run build    # Webview only
-cd packages/types && npm run build      # Types package with obuild
-```
-
 ### Package and Publish
 
 ```bash
@@ -176,21 +162,8 @@ The project uses **Turborepo** for monorepo management with the following pipeli
 
 - **VS Code**: Version 1.102.0 or higher
 - **Git**: Required for file history analysis
-- **Node.js**: Version 18+ for development
+- **Node.js**: Version 22+ for development
 - **AI API Key**: Optional, for enhanced analysis features
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### Development Setup
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
 
 ## License
 
